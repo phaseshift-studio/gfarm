@@ -1,5 +1,5 @@
 esphome:
-  name: gcamera
+  name: gcamera1
 esp32:
   board: esp32dev
   framework:
@@ -10,6 +10,8 @@ logger:
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
+  on_connect:
+    logger.log: wifi connected
 esp32_camera:
   id: espcam
   name: camera

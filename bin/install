@@ -1,0 +1,13 @@
+#!/bin/bash
+###################################################################
+#Script Name : gFarm Install Script
+#Description : Pulls requisite libraries for gFarm
+#Args :
+#Author : Dr. Stynx
+###################################################################
+
+python3 -m venv venv
+source venv/bin/activate
+pip3 install wheel
+pip3 install esphome
+pip3 install aioesphomeapi
