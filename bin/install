@@ -1,9 +1,9 @@
 #!/bin/bash
 ###################################################################
-#Script Name : gFarm Install Script
-#Description : Pulls requisite libraries for gFarm
-#Args :
-#Author : Dr. Stynx
+#name   :gFarm Install Script
+#desc   :Pulls requisite libraries for gFarm
+#args   :
+#author :Dr. Stynx
 ###################################################################
 
 python3 -m venv venv

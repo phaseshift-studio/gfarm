@@ -1,0 +1,3 @@
+ota:
+  - platform: esphome
+    id: ${machine__id}_ota

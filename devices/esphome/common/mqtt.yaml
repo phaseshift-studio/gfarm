@@ -1,0 +1,10 @@
+substitutions:
+  mqtt__username: ${machine__id}
+  mqtt__port: '1883'
+
+mqtt:
+  broker: !secret mqtt__broker
+  port: !secret mqtt__port
+  username: ${mqtt__username}
+  #discovery: False # disable entity discovery
+  #discover_ip: True # enable device discovery

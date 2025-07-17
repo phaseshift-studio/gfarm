@@ -1,0 +1,8 @@
+substitutions:
+  logger__level: INFO
+  logger__baud_rate: "115200"
+
+logger:
+  level: $logger__level
+  baud_rate: $logger__baud_rate
+  tx_buffer_size: 256

@@ -1,0 +1,25 @@
+substitutions:
+  wifi__domain: .local
+wifi:
+  networks:
+    - ssid: !secret wifi__ssid_1
+      password: !secret wifi__password_1
+    - ssid: !secret wifi__ssid_2
+      password: !secret wifi__password_2
+    - ssid: !secret wifi__ssid_3
+      password: !secret wifi__password_3
+  domain: ${wifi__domain}
+
+sensor:
+  - platform: wifi_signal
+    name: "wifi signal"
+    id: wifi_signal_db
+    update_interval: 60s
+    entity_category: diagnostic
+  - platform: copy
+    source_id: wifi_signal_db
+    name: "wifi strength"
+    filters:
+      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
+    unit_of_measurement: "%"
+    entity_category: diagnostic

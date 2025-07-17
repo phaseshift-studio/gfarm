@@ -1,0 +1,8 @@
+substitutions:
+  machine__board: esp32dev
+  machine__type: arduino
+
+esp32:
+  board: ${machine__board}
+  framework:
+    type: ${machine__type}

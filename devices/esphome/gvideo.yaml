@@ -1,0 +1,19 @@
+substitutions:
+    i: '0'
+    machine__id: gvideo_${i}
+    logger__level: INFO
+    status__led_pin: '12'
+
+esphome:
+  name: $machine__id
+
+packages:
+  - !include common/machine.yaml
+  - !include common/esp32.yaml
+  - !include common/logger.yaml
+  - !include common/wifi.yaml
+  - !include common/camera.yaml
+  - !include common/ota.yaml
+  - !include common/led.yaml
+
+api:

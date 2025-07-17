@@ -1,0 +1,86 @@
+substitutions:
+  camera__id: ${machine__id}_cam
+  camera__snapshot_port: '8081'
+  camera__stream_port: '8080'
+  camera__light_pin: GPIO4
+
+
+esp32_camera:
+  id: ${camera__id}
+  name: ${camera__id}_name
+  external_clock:
+    pin: GPIO0
+    frequency: 20MHz
+  i2c_pins:
+    sda: GPIO26
+    scl: GPIO27
+  data_pins: [GPIO5, GPIO18, GPIO19, GPIO21, GPIO36, GPIO39, GPIO34, GPIO35]
+  vsync_pin: GPIO25
+  href_pin: GPIO23
+  pixel_clock_pin: GPIO22
+  power_down_pin: GPIO32
+  max_framerate: 5 fps
+  idle_framerate: 0.05 fps
+  resolution: 1024x768
+  jpeg_quality: 35
+esp32_camera_web_server:
+  - port: $camera__stream_port
+    mode: stream
+  - port: $camera__snapshot_port
+    mode: snapshot
+output:
+# white LED
+  - platform: ledc
+    channel: 2
+    pin: ${camera__light_pin}
+    id: ${camera__id}_white_led
+# red status light
+  - platform: gpio
+    pin:
+      number: GPIO33
+      inverted: True
+    id: ${camera__id}_red_led
+light:
+  - platform: monochromatic
+    output: ${camera__id}_white_led
+    name: esp-cam light
+  - platform: binary
+    output: ${camera__id}_red_led
+    name: esp-cam led
+    id: ${camera__id}_light
+switch:
+  - platform: restart
+    name: restart
+    id: ${camera__id}_restart
+binary_sensor:
+  - platform: status
+    name: status
+    id: ${camera__id}_status
+api:
+  services:  # change camera parameters on-the-fly
+  - service: ${camera__id}_set
+    variables:
+      name: string
+      value: int
+    then:
+      - lambda: |-
+          bool state_return = false;
+          if (("contrast" == name) && (value >= -2) && (value <= 2)) { id(${camera__id}).set_contrast(value); state_return = true; }
+          if (("brightness" == name) && (value >= -2) && (value <= 2)) { id(${camera__id}).set_brightness(value); state_return = true; }
+          if (("saturation" == name) && (value >= -2) && (value <= 2)) { id(${camera__id}).set_saturation(value); state_return = true; }
+          if (("special_effect" == name) && (value >= 0U) && (value <= 6U)) { id(${camera__id}).set_special_effect((esphome::esp32_camera::ESP32SpecialEffect)value); state_return = true; }
+          if (("aec_mode" == name) && (value >= 0U) && (value <= 1U)) { id(${camera__id}).set_aec_mode((esphome::esp32_camera::ESP32GainControlMode)value); state_return = true; }
+          if (("aec2" == name) && (value >= 0U) && (value <= 1U)) { id(${camera__id}).set_aec2(value); state_return = true; }
+          if (("ae_level" == name) && (value >= -2) && (value <= 2)) { id(${camera__id}).set_ae_level(value); state_return = true; }
+          if (("aec_value" == name) && (value >= 0U) && (value <= 1200U)) { id(${camera__id}).set_aec_value(value); state_return = true; }
+          if (("agc_mode" == name) && (value >= 0U) && (value <= 1U)) { id(${camera__id}).set_agc_mode((esphome::esp32_camera::ESP32GainControlMode)value); state_return = true; }
+          if (("agc_value" == name) && (value >= 0U) && (value <= 30U)) { id(${camera__id}).set_agc_value(value); state_return = true; }
+          if (("agc_gain_ceiling" == name) && (value >= 0U) && (value <= 6U)) { id(${camera__id}).set_agc_gain_ceiling((esphome::esp32_camera::ESP32AgcGainCeiling)value); state_return = true; }
+          if (("wb_mode" == name) && (value >= 0U) && (value <= 4U)) { id(${camera__id}).set_wb_mode((esphome::esp32_camera::ESP32WhiteBalanceMode)value); state_return = true; }
+          if (("test_pattern" == name) && (value >= 0U) && (value <= 1U)) { id(${camera__id}).set_test_pattern(value); state_return = true; }
+          if (true == state_return) {
+            id(${camera__id}).update_camera_parameters();
+          }
+          else {
+            ESP_LOGW("esp32_camera_set_param", "Error in name or data range");
+          }   

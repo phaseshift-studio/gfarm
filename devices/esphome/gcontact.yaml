@@ -1,0 +1,50 @@
+substitutions:
+    i: '0'
+    machine__id: gcontact_${i}
+    machine__board: esp32-c3-devkitm-1
+    contact_id: ${machine__id}_contact
+    contact_pin: "3"
+    led_id: ${machine__id}_led
+    led_pin: "2"
+    logger__level: INFO
+
+packages:
+  - !include common/machine.yaml
+  - !include common/rpi.yaml
+  - !include common/logger.yaml
+  - !include common/wifi.yaml
+  - !include common/ota.yaml
+
+api:
+
+
+switch:
+  - platform: gpio
+    id: ${led_id}
+    name: "gate contact led"
+    pin:
+      number: ${led_pin}
+      inverted: False
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: ${contact_pin}
+      mode: INPUT_PULLUP
+      inverted: False
+    id: ${contact_id}
+    name: "gate contact"
+    device_class: door
+    on_press:
+      then:
+        - switch.turn_on: ${led_id}
+        - logger.log:
+            level: INFO
+            format: "gate open"
+    on_release:
+      then:
+        - switch.turn_off: ${led_id}
+        - logger.log:
+            level: INFO
+            format: "gate closed"
+

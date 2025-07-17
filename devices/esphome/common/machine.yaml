@@ -1,0 +1,12 @@
+substitutions:
+  machine__name: ${machine__id}
+  machine__friendly_name: ${machine__id}
+
+esphome:
+  name: ${machine__name}
+  friendly_name: ${machine__friendly_name}
+  project:
+    name: gfarm.${machine__id}
+    version: 0.1-alpha
+
+

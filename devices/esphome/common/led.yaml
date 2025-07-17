@@ -1,0 +1,4 @@
+light:
+  - platform: status_led
+    name: "led status light"
+    pin: ${status__led_pin}
